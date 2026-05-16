@@ -1,5 +1,30 @@
 #!/bin/bash
 
+# TODO: 以下のようなテキストが出力されるように、実装する
+
+'''
+Directory structure:
+└── takapg-aider-test/
+    ├── README.md
+    ├── gitingest_like.sh
+    └── .github/
+        └── workflows/
+            └── aider-cli.yml
+
+
+Files Content:
+
+================================================
+FILE: README.md
+================================================
+# aider-test
+
+
+================================================
+FILE: gitingest_like.sh
+================================================
+#!/bin/bash
+
 # Script to mimic basic Git history and file change output
 
 echo "--- Git History Summary ---"
@@ -13,3 +38,87 @@ echo -e "\n--- File Changes Summary (Last Commit) ---"
 # Display files changed in the last commit
 echo "Files changed in the last commit:"
 git show HEAD
+
+
+
+================================================
+FILE: .github/workflows/aider-cli.yml
+================================================
+name: Aider CLI
+
+on:
+  workflow_dispatch:
+    inputs:
+      instruction:
+        description: 'AIに指示したい内容（例: コードの最適化をして、テストコードを追加して、など）'
+        required: true
+        default: 'コードを綺麗にリファクタリングして、バグがないか確認してください。'
+
+jobs:
+  aider-cli:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      # 1. コードをチェックアウト（Git履歴も取得するために fetch-depth: 0）
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2. Python環境のセットアップ（Aiderの実行に必要）
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-node-version: '3.11'
+
+      # 3. Ollama（AI実行エンジン）のインストール
+      - name: Install Ollama
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+
+      # 4. Ollamaサーバーの起動とモデルのバックグラウンドDL
+      - name: Start Ollama & Pull Gemma 4 E2B
+        run: |
+          ollama serve &
+          echo "Waiting for Ollama to start..."
+          sleep 5
+          ollama pull gemma4:e2b
+
+      # 5. Aider（エージェントツール）のインストール
+      - name: Install Aider
+        run: |
+          pip install aider-chat
+
+      # 6. Gitユーザーの設定（Aiderが自動コミットするために必要）
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      # 7. Aider + Gemma 4 CLI の実行
+      - name: Run AI Agent CLI
+        run: |
+          # 手動起動（workflow_dispatch）の場合は入力された指示を、PRの場合は固定指示を使用
+          INSTRUCTION="${{ github.event.inputs.instruction }}"
+          if [ -z "$INSTRUCTION" ]; then
+            INSTRUCTION="直近のコミットで変更されたファイルを確認し、より効率的なコードにリファクタリングしてコミットしてください。"
+          fi
+          
+          echo "Executing instruction: $INSTRUCTION"
+          
+          # Aiderをノンインタラクティブ（自動化モード）で起動
+          # 自動的に該当ファイルを特定し、修正し、git commitまで行います
+          aider --model ollama/gemma4:e2b \
+                --yes \
+                --message "$INSTRUCTION"
+
+      # 8. 変更されたコードをリポジトリにプッシュ
+      - name: Push changes
+        run: |
+          git push origin HEAD:${{ github.head_ref || github.ref_name }}
+
+
+
+'''
