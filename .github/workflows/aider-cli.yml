@@ -66,6 +66,9 @@ jobs:
           # 自動的に該当ファイルを特定し、修正し、git commitまで行います
           aider --model ollama/gemma4:e2b \
                 --yes \
+                --no-pretty \
+                --stream \
+                --verbose \
                 --message "$INSTRUCTION"
 
       # 8. 変更されたコードをリポジトリにプッシュ
