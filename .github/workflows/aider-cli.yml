@@ -38,7 +38,7 @@ jobs:
           ollama serve &
           echo "Waiting for Ollama to start..."
           sleep 5
-          ollama pull gemma4:2b
+          ollama pull gemma4:e2b
 
       # 5. Aider（エージェントツール）のインストール
       - name: Install Aider
@@ -64,7 +64,7 @@ jobs:
           
           # Aiderをノンインタラクティブ（自動化モード）で起動
           # 自動的に該当ファイルを特定し、修正し、git commitまで行います
-          aider --model ollama/gemma4:2b \
+          aider --model ollama/gemma4:e2b \
                 --yes \
                 --message "$INSTRUCTION"
 
