@@ -33,12 +33,12 @@ jobs:
           curl -fsSL https://ollama.com/install.sh | sh
 
       # 4. Ollamaサーバーの起動とモデルのバックグラウンドDL
-      - name: Start Ollama & Pull Gemma 4 E2B
+      - name: Start Ollama & Pull
         run: |
           ollama serve &
           echo "Waiting for Ollama to start..."
           sleep 5
-          ollama pull gemma4:e2b
+          ollama pull gemma4:e4b
 
       # 5. Aider（エージェントツール）のインストール
       - name: Install Aider
@@ -64,7 +64,7 @@ jobs:
           
           # Aiderをノンインタラクティブ（自動化モード）で起動
           # 自動的に該当ファイルを特定し、修正し、git commitまで行います
-          aider --model ollama/gemma4:e2b \
+          aider --model ollama/gemma4:e4b \
                 --yes \
                 --no-pretty \
                 --stream \
