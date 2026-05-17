@@ -21,6 +21,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      # miseのセットアップ
+      - name: Setup mise
+        uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+
       # Python環境のセットアップ
       - name: Set up Python and uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
@@ -53,6 +57,7 @@ jobs:
                 --chat-language japanese \
                 --architect \
                 --no-pretty \
+                --test "mise exec -- bats tests/" \
                 --message "$INSTRUCTION"
 
       # 変更されたコードをリポジトリにプッシュ
