@@ -48,7 +48,7 @@ jobs:
 
           aider --model groq/openai/gpt-oss-120b \
                 --editor-model groq/meta-llama/llama-4-scout-17b-16e-instruct \
-                --weak-model groq/meta-llama/llama-4-scout-17b-16e-instruct \
+                --weak-model groq/llama-3.1-8b-instant \
                 --yes-always \
                 --chat-language japanese \
                 --architect \
