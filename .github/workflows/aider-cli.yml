@@ -1,4 +1,4 @@
-name: Aider CLI (Groq Powered)
+name: Aider CLI
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
       instruction:
         description: 'AIに指示したい内容'
         required: true
-        default: 'コードを綺麗にリファクタリングして、バグがないか確認してください。'
+        default: ''
 
 jobs:
   aider-cli:
@@ -15,43 +15,53 @@ jobs:
       contents: write
 
     steps:
-      # 1. コードをチェックアウト
+      # コードをチェックアウト
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 2. Python環境のセットアップ
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      # miseのセットアップ
+      - name: Setup mise
+        uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+
+      # Python環境のセットアップ
+      - name: Set up Python and uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
         with:
           python-version: '3.11'
 
-      # 3. Aiderのインストール
+      # Aiderのインストール
       - name: Install Aider
         run: |
-          pip install aider-chat
+          uv tool install aider-chat
 
-      # 4. Gitユーザーの設定
+      # Gitユーザーの設定
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      # 5. GroqをバックエンドにしてAiderを実行
+      # GroqをバックエンドにしてAiderを実行
       - name: Run AI Agent CLI via Groq
         env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }} # 事前にGitHubに登録したシークレット
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           INSTRUCTION: ${{ github.event.inputs.instruction }}
         run: |
           echo "Executing instruction: $INSTRUCTION"
 
-          aider --model groq/meta-llama/llama-4-scout-17b-16e-instruct \
-                --yes \
+          aider --model groq/openai/gpt-oss-120b \
+                --editor-model groq/meta-llama/llama-4-scout-17b-16e-instruct \
+                --weak-model groq/llama-3.1-8b-instant \
+                --yes-always \
+                --chat-language japanese \
+                --architect \
+                --no-pretty \
+                --test-cmd "mise exec -- bats tests/" \
+                --auto-test \
                 --message "$INSTRUCTION"
 
-      # 6. 変更されたコードをリポジトリにプッシュ
+      # 変更されたコードをリポジトリにプッシュ
       - name: Push changes
         run: |
           git push origin HEAD:${{ github.head_ref || github.ref_name }}
-
