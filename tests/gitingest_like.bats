@@ -1,7 +1,6 @@
 #!/usr/bin/env bats
 
-load 'bats/assert.sh'
-load 'bats/load.sh'
+load 'bats/load'
 
 @test "gitingest_like.sh outputs summary" {
   run ./gitingest_like.sh
