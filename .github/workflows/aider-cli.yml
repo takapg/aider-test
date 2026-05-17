@@ -15,30 +15,30 @@ jobs:
       contents: write
 
     steps:
-      # 1. コードをチェックアウト
+      # コードをチェックアウト
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 2. Python環境のセットアップ
+      # Python環境のセットアップ
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # 3. Aiderのインストール
+      # Aiderのインストール
       - name: Install Aider
         run: |
           pip install aider-chat
 
-      # 4. Gitユーザーの設定
+      # Gitユーザーの設定
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      # 5. GroqをバックエンドにしてAiderを実行
+      # GroqをバックエンドにしてAiderを実行
       - name: Run AI Agent CLI via Groq
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -46,13 +46,14 @@ jobs:
         run: |
           echo "Executing instruction: $INSTRUCTION"
 
-          aider --model groq/meta-llama/llama-4-scout-17b-16e-instruct \
+          aider --model openrouter/minimax/minimax-m2.5:free \
+                --editor-model groq/meta-llama/llama-4-scout-17b-16e-instruct \
                 --yes \
                 --architect \
+                --no-pretty \
                 --message "$INSTRUCTION"
 
-      # 6. 変更されたコードをリポジトリにプッシュ
+      # 変更されたコードをリポジトリにプッシュ
       - name: Push changes
         run: |
           git push origin HEAD:${{ github.head_ref || github.ref_name }}
-
