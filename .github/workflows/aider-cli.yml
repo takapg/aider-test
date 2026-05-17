@@ -41,6 +41,7 @@ jobs:
       # GroqをバックエンドにしてAiderを実行
       - name: Run AI Agent CLI via Groq
         env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           INSTRUCTION: ${{ github.event.inputs.instruction }}
         run: |
