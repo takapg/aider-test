@@ -38,20 +38,21 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      # 5. OpenRouterをバックエンドにしてAiderを実行
-      - name: Run AI Agent CLI via OpenRouter
+      # 5. GroqをバックエンドにしてAiderを実行
+      - name: Run AI Agent CLI via Groq
         env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           INSTRUCTION: ${{ github.event.inputs.instruction }}
         run: |
           echo "Executing instruction: $INSTRUCTION"
 
-          aider --model openrouter/minimax/minimax-m2.5:free \
-                --no-pretty \
+          aider --model groq/meta-llama/llama-4-scout-17b-16e-instruct \
                 --yes \
+                --architect \
                 --message "$INSTRUCTION"
 
       # 6. 変更されたコードをリポジトリにプッシュ
       - name: Push changes
         run: |
           git push origin HEAD:${{ github.head_ref || github.ref_name }}
+
