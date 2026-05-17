@@ -1,0 +1,7 @@
+# .mise.toml – mise (asdf 互換) 用設定
+# BATS (Bash Automated Testing System) をテスト実行に利用します
+# 必要に応じて git もインストールしておくと安全です
+
+[tools]
+bats = "latest"   # BATS の最新版を取得
+git  = "latest"   # git が未インストールの場合に備えて
