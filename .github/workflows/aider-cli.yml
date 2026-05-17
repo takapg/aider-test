@@ -46,7 +46,7 @@ jobs:
         run: |
           echo "Executing instruction: $INSTRUCTION"
 
-          aider --model openrouter/minimax/mini-max-m2.5:free \
+          aider --model openrouter/minimax/minimax-m2.5:free \
                 --yes \
                 --message "$INSTRUCTION"
 
