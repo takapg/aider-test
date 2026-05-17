@@ -1,0 +1,79 @@
+Summary:
+Repository: takapg/localhost-run-test
+Commit: 3bfa4d1d200bea756ab177965a80f792b6428e88
+Files analyzed: 4
+
+
+Directory structure:
+└── takapg-localhost-run-test/
+    ├── README.md
+    ├── index.html
+    ├── server.sh
+    └── .github/
+        └── workflows/
+            └── tunnel-test.yml
+
+
+Files Content:
+
+================================================
+FILE: README.md
+================================================
+# localhost-run-test
+
+
+================================================
+FILE: index.html
+================================================
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>Hello!</h1>
+  <p>GitHub Actions Tunnel Test Success.</p>
+</body>
+</html>
+
+
+
+================================================
+FILE: server.sh
+================================================
+#!/bin/bash
+# ポート8000でカレントディレクトリのファイルを公開
+python3 -m http.server 8000
+
+
+
+================================================
+FILE: .github/workflows/tunnel-test.yml
+================================================
+name: Tunnel Test
+on: [workflow_dispatch]
+
+jobs:
+  open-tunnel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start Static Server
+        run: |
+          # サーバーをバックグラウンドで起動
+          bash server.sh &
+          sleep 2
+
+      - name: Open Localhost.run Tunnel
+        run: |
+          # SSHトンネルを起動し、ログをファイルに保存
+          ssh -o StrictHostKeyChecking=no -R 80:localhost:8000 nokey@localhost.run 2>&1 | tee tunnel.log &
+          
+          # URLがログに出るまで待機（10秒程度）
+          sleep 10
+          
+          echo "=========================================="
+          echo "アクセスURLは以下の通りです（lhr.lifeで終わるもの）"
+          grep -o 'https://[^ ]*lhr.life' tunnel.log || echo "URL取得に失敗しました。ログを確認してください。"
+          echo "=========================================="
+          
+          # 接続を維持するために、しばらく待機（確認が終わったら手動でキャンセルしてください）
+          sleep 1800
