@@ -47,6 +47,7 @@ jobs:
           echo "Executing instruction: $INSTRUCTION"
 
           aider --model openrouter/minimax/minimax-m2.5:free \
+                --no-pretty \
                 --yes \
                 --message "$INSTRUCTION"
 
