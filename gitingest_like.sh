@@ -6,20 +6,28 @@ echo "--- Git History Summary ---"
 
 # Display the last 5 commits
 echo -e "\nLast 5 Commits:"
-git log -5 --oneline
+if ! git log -5 --oneline; then
+    echo "Error: Unable to retrieve commit history."
+    exit 1
+fi
 
 echo -e "\n--- File Changes Summary (Last Commit) ---"
 
 # Display files changed in the last commit
 echo "Files changed in the last commit:"
-git show HEAD
+if ! git show HEAD; then
+    echo "Error: Unable to retrieve file changes."
+    exit 1
+fi
 
 echo -e "\n--- Directory Structure ---"
-# Display directory structure using tree command (assuming it's available, or use find/ls)
-# Using find for broader compatibility, listing files in the current directory and subdirectories
+
+# Display directory structure using find command
+echo "Directory structure:"
 find . -print
 
 echo -e "\n--- File Contents ---"
+
 # Display contents of all relevant files
 find . -type f -print0 | while IFS= read -r -d $'\0' file; do
     echo "=================================================="
