@@ -1,4 +1,4 @@
-name: Aider CLI (Groq Powered)
+name: Aider CLI
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
       instruction:
         description: 'AIに指示したい内容'
         required: true
-        default: 'コードを綺麗にリファクタリングして、バグがないか確認してください。'
+        default: ''
 
 jobs:
   aider-cli:
@@ -38,15 +38,15 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      # 5. GroqをバックエンドにしてAiderを実行
-      - name: Run AI Agent CLI via Groq
+      # 5. OpenRouterをバックエンドにしてAiderを実行
+      - name: Run AI Agent CLI via OpenRouter
         env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }} # 事前にGitHubに登録したシークレット
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           INSTRUCTION: ${{ github.event.inputs.instruction }}
         run: |
           echo "Executing instruction: $INSTRUCTION"
 
-          aider --model groq/meta-llama/llama-4-scout-17b-16e-instruct \
+          aider --model openrouter/minimax/mini-max-m2.5:free \
                 --yes \
                 --message "$INSTRUCTION"
 
@@ -54,4 +54,3 @@ jobs:
       - name: Push changes
         run: |
           git push origin HEAD:${{ github.head_ref || github.ref_name }}
-
