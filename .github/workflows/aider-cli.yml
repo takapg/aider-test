@@ -57,7 +57,8 @@ jobs:
                 --chat-language japanese \
                 --architect \
                 --no-pretty \
-                --test "mise exec -- bats tests/" \
+                --test-cmd "mise exec -- bats tests/" \
+                --auto-test \
                 --message "$INSTRUCTION"
 
       # 変更されたコードをリポジトリにプッシュ
