@@ -1,5 +1,8 @@
 #!/usr/bin/env bats
 
+load 'bats/assert.sh'
+load 'bats/load.sh'
+
 @test "gitingest_like.sh outputs summary" {
   run ./gitingest_like.sh
   assert_line 0 "Summary:"
