@@ -1,4 +1,4 @@
-load './assertions.bats'
+#!/usr/bin/env bats
 
 @test "gitingest_like.sh outputs summary" {
   run ./gitingest_like.sh
