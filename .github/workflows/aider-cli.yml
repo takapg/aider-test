@@ -22,15 +22,15 @@ jobs:
           fetch-depth: 0
 
       # Python環境のセットアップ
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up Python and uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
         with:
           python-version: '3.11'
 
       # Aiderのインストール
       - name: Install Aider
         run: |
-          pip install aider-chat
+          uv tool install aider-chat
 
       # Gitユーザーの設定
       - name: Configure Git
