@@ -1,6 +1,3 @@
-// テストテンプレート
-load 'bats/load'
-
 @test "gitingest_like.sh outputs summary" {
   run ./gitingest_like.sh
   assert_line 0 "Summary:"
